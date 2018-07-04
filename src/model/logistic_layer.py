@@ -148,7 +148,7 @@ class LogisticLayer():
                                         self.inp)
 
     def _fire(self, inp):
-        return self.activation(np.dot(inp,  self.weights, self.outp))
+        return self.activation(np.dot(inp, self.weights, self.outp))
 
     def isOutputlayer(self):
         return self.isClassifierLayer

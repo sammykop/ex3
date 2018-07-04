@@ -17,7 +17,7 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, inputWeights=None,
                  outputTask='classification', outputActivation='softmax',
-                 loss='crossentropy', learningRate=0.05, epochs=10):
+                 loss='bce', learningRate=0.05, epochs=10):
 
         np.seterr(all='ignore')
         """
@@ -77,21 +77,19 @@ class MultilayerPerceptron(Classifier):
         self.layers = []
 
         # Input layer
-        self.layers.append(LogisticLayer(train.input.shape[1], 128, None, "sigmoid", False))
+        self.layers.append(LogisticLayer(train.input.shape[1], 16, None, "sigmoid", False))
 
         # Hidden layers
-        self.layers.append(LogisticLayer(128, 64, None, "sigmoid", False))
+        self.layers.append(LogisticLayer(16, 16, None, "sigmoid", False))
 
         # Output layer
-        self.layers.append(LogisticLayer(64, 10, None, "softmax", True))
+        self.layers.append(LogisticLayer(16, 10, None, "softmax", True))
 
         self.inputWeights = inputWeights
 
         # add bias values ("1"s) at the beginning of all data sets
-        self.trainingSet.input = np.insert(self.trainingSet.input, 0, 1,
-                                            axis=1)
-        self.validationSet.input = np.insert(self.validationSet.input, 0, 1,
-                                              axis=1)
+        self.trainingSet.input = np.insert(self.trainingSet.input, 0, 1, axis=1)
+        self.validationSet.input = np.insert(self.validationSet.input, 0, 1, axis=1)
         self.testSet.input = np.insert(self.testSet.input, 0, 1, axis=1)
 
 

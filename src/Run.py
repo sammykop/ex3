@@ -31,8 +31,8 @@ def main():
     mlpClassifier = MultilayerPerceptron(data.trainingSet,
                                          data.validationSet,
                                          data.testSet,
-                                         learningRate=0.00000000001,
-                                         epochs=50)
+                                         learningRate=0.005,
+                                         epochs=25)
                                         
     
     # Report the result #
@@ -51,9 +51,9 @@ def main():
     # myPerceptronClassifier.train()
     # print("Done..")
     #
-    print("\nLogistic Regression has been training..")
-    myLRClassifier.train()
-    print("Done..")
+    # print("\nLogistic Regression has been training..")
+    # myLRClassifier.train()
+    # print("Done..")
 
     print("\nMLP has been training..")
     mlpClassifier.train()
@@ -63,7 +63,7 @@ def main():
     # Explicitly specify the test set to be evaluated
     # stupidPred = myStupidClassifier.evaluate()
     # perceptronPred = myPerceptronClassifier.evaluate()
-    lrPred = myLRClassifier.evaluate()
+    #lrPred = myLRClassifier.evaluate()
     mlpPred = mlpClassifier.evaluate()
     
     # Report the result
@@ -78,17 +78,17 @@ def main():
     # #evaluator.printComparison(data.testSet, perceptronPred)
     # evaluator.printAccuracy(data.testSet, perceptronPred)
     #
-    print("\nResult of the Logistic Regression recognizer:")
-    evaluator.printComparison(data.testSet, lrPred)
-    evaluator.printAccuracy(data.testSet, lrPred)
+    # print("\nResult of the Logistic Regression recognizer:")
+    # evaluator.printComparison(oneHotData.testSet, lrPred)
+    # evaluator.printAccuracy(oneHotData.testSet, lrPred)
 
     print("\nResult of the MLP:")
     evaluator.printComparison(data.testSet, mlpPred)
     evaluator.printAccuracy(data.testSet, mlpPred)
     
     #Draw
-    plot = PerformancePlot("Logistic Regression validation")
-    plot.draw_performance_epoch(myLRClassifier.performances, myLRClassifier.epochs)
+    plot = PerformancePlot("MLP validation")
+    plot.draw_performance_epoch(mlpClassifier.performances, mlpClassifier.epochs)
     
     
 if __name__ == '__main__':
