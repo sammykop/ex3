@@ -77,17 +77,13 @@ class MultilayerPerceptron(Classifier):
         self.layers = []
 
         # Input layer
-        inputActivation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 128, None, inputActivation, False))
+        self.layers.append(LogisticLayer(train.input.shape[1], 128, None, "sigmoid", False))
 
         # Hidden layers
-        outputActivation = "sigmoid"
-        self.layers.append(LogisticLayer(128, 64, None, outputActivation, False))
+        self.layers.append(LogisticLayer(128, 64, None, "sigmoid", False))
 
         # Output layer
-        outputActivation = "softmax"
-        self.layers.append(LogisticLayer(64, 10,
-                           None, outputActivation, True))
+        self.layers.append(LogisticLayer(64, 10, None, "softmax", True))
 
         self.inputWeights = inputWeights
 
