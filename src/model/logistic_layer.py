@@ -44,16 +44,15 @@ class LogisticLayer():
         # Get activation function from string
         self.activationString = activation
         self.activation = Activation.getActivation(self.activationString)
-        self.activationDerivative = Activation.getDerivative(
-                                    self.activationString)
+        self.activationDerivative = Activation.getDerivative(self.activationString)
 
         self.nIn = nIn
         self.nOut = nOut
 
-        self.inp = np.ndarray((nIn+1, 1))
+        self.inp = np.ndarray((nIn+1,))
         self.inp[0] = 1
-        self.outp = np.ndarray((nOut, 1))
-        self.deltas = np.zeros((nOut, 1))
+        self.outp = np.ndarray((nOut,))
+        self.deltas = np.zeros((nOut,))
 
         # You can have better initialization here
         if weights is None:
@@ -86,10 +85,8 @@ class LogisticLayer():
 
         # Here you have to implement the forward pass
         self.inp = inp
-        outp = self._fire(inp)
-        self.outp = outp
-
-        return outp
+        self._fire(inp)
+        return self.outp
 
     def computeDerivative(self, next_derivatives, next_weights):
         """
@@ -149,7 +146,9 @@ class LogisticLayer():
             self.weights[:, neuron] -= (learningRate *
                                         self.deltas[neuron] *
                                         self.inp)
-        
 
     def _fire(self, inp):
-        return self.activation(np.dot(inp, self.weights))
+        return self.activation(np.dot(inp,  self.weights, self.outp))
+
+    def isOutputlayer(self):
+        return self.isClassifierLayer
