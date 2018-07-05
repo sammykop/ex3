@@ -166,8 +166,10 @@ class MultilayerPerceptron(Classifier):
     def trainEpoch(self):
         for inp, target in zip(self.trainingSet.input,
                               self.trainingSet.label):
+            targetVector = np.zeros(10)
+            targetVector[target] = 1
             self._feed_forward(inp)
-            self._backpropagate(target)
+            self._backpropagate(targetVector)
             self._update_weights(self.learningRate)
 
 

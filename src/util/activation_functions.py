@@ -8,6 +8,7 @@ from numpy import exp
 from numpy import divide
 from numpy import ones
 from numpy import asarray
+from scipy.special._ufuncs import expit
 
 
 class Activation:
@@ -22,7 +23,7 @@ class Activation:
     @staticmethod
     def sigmoid(netOutput):
         # use e^x from numpy to avoid overflow
-        return 1/(1+exp(-1.0*netOutput))
+        return 1/(1+expit(-1.0*netOutput))
 
     @staticmethod
     def sigmoidPrime(netOutput):
@@ -33,8 +34,8 @@ class Activation:
     @staticmethod
     def tanh(netOutput):
         # return 2*Activation.sigmoid(2*netOutput)-1
-        ex = exp(1.0*netOutput)
-        exn = exp(-1.0*netOutput)
+        ex = expit(1.0*netOutput)
+        exn = expit(-1.0*netOutput)
         return divide(ex-exn, ex+exn)  # element-wise division
 
     @staticmethod
@@ -64,7 +65,7 @@ class Activation:
     @staticmethod
     def softmax(netOutput):
         exp_sum = sum(exp(netOutput))
-        return exp(netOutput) / exp_sum
+        return expit(netOutput) / exp_sum
 
     @staticmethod
     def softmaxPrime(netOutput):

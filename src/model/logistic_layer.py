@@ -57,7 +57,7 @@ class LogisticLayer():
         # You can have better initialization here
         if weights is None:
             rns = np.random.RandomState(int(time.time()))
-            self.weights = rns.uniform(size=(nIn + 1, nOut))-0.5
+            self.weights = (rns.uniform(size=(nIn + 1, nOut))-0.5)
         else:
             assert(weights.shape == (nIn + 1, nOut))
             self.weights = weights
