@@ -17,7 +17,7 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, inputWeights=None,
                  outputTask='classification', outputActivation='softmax',
-                 loss='bce', learningRate=0.05, epochs=10):
+                 loss='crossentropy', learningRate=0.05, epochs=10):
 
         np.seterr(all='ignore')
         """
@@ -127,7 +127,7 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        return self.loss.calculateError(target, self._get_output_layer().outp)
+        return self.loss.calculateDerivative(target, self._get_output_layer().outp)
     
     def _update_weights(self, learningRate):
         """
@@ -138,14 +138,13 @@ class MultilayerPerceptron(Classifier):
 
     def _backpropagate(self, target):
 
-        numLayers = len(self.layers)
-        for i in reversed(range(0,numLayers)):
+        output_delta = target - self._get_output_layer().outp
+        weights = np.ones(self._get_output_layer().nOut)
+
+        for i in reversed(range(0,len(self.layers))):
             layer = self.layers[i]
-            if layer.isClassifierLayer:
-                weights = np.ones(layer.nOut)
-                layer.computeDerivative(self.loss.calculateDerivative(np.array(target), layer.outp), weights)
-            else:
-                layer.computeDerivative(self.layers[i+1].deltas, np.transpose(np.delete(self.layers[i+1].weights,0,0)))
+            output_delta = layer.computeDerivative(output_delta, np.transpose(weights))
+            weights = np.delete(layer.weights,0,0)
 
     def train(self, verbose=True):
         for epoch in range(self.epochs):
