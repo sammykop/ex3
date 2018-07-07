@@ -19,7 +19,6 @@ class MultilayerPerceptron(Classifier):
                  outputTask='classification', outputActivation='softmax',
                  loss='crossentropy', learningRate=0.05, epochs=10):
 
-        np.seterr(all='ignore')
         """
         A MNIST recognizer based on multi-layer perceptron algorithm
 
@@ -119,16 +118,8 @@ class MultilayerPerceptron(Classifier):
             activationValues = np.insert(layer.forward(activationValues),0,1)
         
     def _compute_error(self, target):
-        """
-        Compute the total error of the network (error terms from the output layer)
+        return  target - self._get_output_layer().outp
 
-        Returns
-        -------
-        ndarray :
-            a numpy array (1,nOut) containing the output of the layer
-        """
-        return self.loss.calculateDerivative(target, self._get_output_layer().outp)
-    
     def _update_weights(self, learningRate):
         """
         Update the weights of the layers by propagating back the error
@@ -138,11 +129,10 @@ class MultilayerPerceptron(Classifier):
 
     def _backpropagate(self, target):
 
-        output_delta = target - self._get_output_layer().outp
+        output_delta = self._compute_error(target)
         weights = np.ones(self._get_output_layer().nOut)
 
-        for i in reversed(range(0,len(self.layers))):
-            layer = self.layers[i]
+        for layer in reversed(self.layers):
             output_delta = layer.computeDerivative(output_delta, np.transpose(weights))
             weights = np.delete(layer.weights,0,0)
 
