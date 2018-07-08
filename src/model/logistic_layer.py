@@ -85,7 +85,7 @@ class LogisticLayer():
 
         # Here you have to implement the forward pass
         self.inp = inp
-        self._fire(inp)
+        self.outp = self._fire(inp)
         return self.outp
 
     def computeDerivative(self, next_derivatives, next_weights):
@@ -147,7 +147,7 @@ class LogisticLayer():
                                         np.dot(self.deltas[neuron],self.inp))
 
     def _fire(self, inp):
-        return self.activation(np.dot(inp, self.weights, self.outp))
+        return self.activation(np.dot(inp, self.weights))
 
     def isOutputlayer(self):
         return self.isClassifierLayer

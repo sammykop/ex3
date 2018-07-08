@@ -17,7 +17,7 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, inputWeights=None,
                  outputTask='classification', outputActivation='softmax',
-                 loss='crossentropy', learningRate=0.05, epochs=10):
+                 loss='crossentropy', learningRate=0.05, epochs=50):
 
         """
         A MNIST recognizer based on multi-layer perceptron algorithm
@@ -76,13 +76,13 @@ class MultilayerPerceptron(Classifier):
         self.layers = []
 
         # Input layer
-        self.layers.append(LogisticLayer(train.input.shape[1], 16, None, "sigmoid", False))
+        self.layers.append(LogisticLayer(train.input.shape[1], 128, None, "sigmoid", False))
 
         # Hidden layers
-        self.layers.append(LogisticLayer(16, 16, None, "sigmoid", False))
+        self.layers.append(LogisticLayer(128, 64, None, "sigmoid", False))
 
         # Output layer
-        self.layers.append(LogisticLayer(16, 10, None, "softmax", True))
+        self.layers.append(LogisticLayer(64, 10, None, outputActivation, True))
 
         self.inputWeights = inputWeights
 
@@ -118,7 +118,7 @@ class MultilayerPerceptron(Classifier):
             activationValues = np.insert(layer.forward(activationValues),0,1)
         
     def _compute_error(self, target):
-        return  target - self._get_output_layer().outp
+        return  self.loss.calculateError(target,  self._get_output_layer().outp)
 
     def _update_weights(self, learningRate):
         """
