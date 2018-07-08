@@ -75,14 +75,11 @@ class MultilayerPerceptron(Classifier):
         # Build up the network from specific layers
         self.layers = []
 
-        # Input layer
+        # Hidden Layer
         self.layers.append(LogisticLayer(train.input.shape[1], 128, None, "sigmoid", False))
 
-        # Hidden layers
-        self.layers.append(LogisticLayer(128, 64, None, "sigmoid", False))
-
         # Output layer
-        self.layers.append(LogisticLayer(64, 10, None, outputActivation, True))
+        self.layers.append(LogisticLayer(128, 10, None, "softmax", True))
 
         self.inputWeights = inputWeights
 
@@ -128,13 +125,12 @@ class MultilayerPerceptron(Classifier):
             layer.updateWeights(learningRate)
 
     def _backpropagate(self, target):
-
-        output_delta = self._compute_error(target)
-        weights = np.ones(self._get_output_layer().nOut)
+        next_delta = target - self._get_output_layer().outp
+        next_weights = np.ones(self._get_output_layer().nOut)
 
         for layer in reversed(self.layers):
-            output_delta = layer.computeDerivative(output_delta, np.transpose(weights))
-            weights = np.delete(layer.weights,0,0)
+            next_delta = layer.computeDerivative(next_delta, np.transpose(next_weights))
+            next_weights = np.delete(layer.weights,0,0)
 
     def train(self, verbose=True):
         for epoch in range(self.epochs):
@@ -192,6 +188,5 @@ class MultilayerPerceptron(Classifier):
     def __del__(self):
         # Remove the bias from input data
         self.trainingSet.input = np.delete(self.trainingSet.input, 0, axis=1)
-        self.validationSet.input = np.delete(self.validationSet.input, 0,
-                                              axis=1)
+        self.validationSet.input = np.delete(self.validationSet.input, 0, axis=1)
         self.testSet.input = np.delete(self.testSet.input, 0, axis=1)
