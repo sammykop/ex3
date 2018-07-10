@@ -8,7 +8,6 @@ from numpy import exp
 from numpy import divide
 from numpy import ones
 from numpy import asarray
-from scipy.special._ufuncs import expit
 
 
 class Activation:
