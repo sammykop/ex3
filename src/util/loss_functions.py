@@ -126,4 +126,3 @@ class CrossEntropyError(Error):
         
     def calculateDerivative(self, target, output):
         return -target/output + (1-target)/(1-output)
-        #return target - put

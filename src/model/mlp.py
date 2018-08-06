@@ -43,8 +43,6 @@ class MultilayerPerceptron(Classifier):
         self.learningRate = learningRate
         self.epochs = epochs
         self.outputTask = outputTask  # Either classification or regression
-        self.outputActivation = outputActivation
-        #self.cost = cost
 
         self.trainingSet = train
         self.validationSet = valid
@@ -76,17 +74,19 @@ class MultilayerPerceptron(Classifier):
         self.layers = []
 
         # Hidden Layer
-        self.layers.append(LogisticLayer(train.input.shape[1], 128, None, "sigmoid", False))
+        self.layers.append(LogisticLayer(train.input.shape[1], 64, None, "sigmoid", False))
+
+        self.layers.append(LogisticLayer(64, 64, None, "sigmoid", False))
 
         # Output layer
-        self.layers.append(LogisticLayer(128, 10, None, "softmax", True))
+        self.layers.append(LogisticLayer(64, 10, None, "softmax", True))
 
         self.inputWeights = inputWeights
 
         # add bias values ("1"s) at the beginning of all data sets
-        self.trainingSet.input = np.insert(self.trainingSet.input, 0, 1, axis=1)
-        self.validationSet.input = np.insert(self.validationSet.input, 0, 1, axis=1)
-        self.testSet.input = np.insert(self.testSet.input, 0, 1, axis=1)
+        #self.trainingSet.input = np.insert(self.trainingSet.input, 0, 1, axis=1)
+        #self.validationSet.input = np.insert(self.validationSet.input, 0, 1, axis=1)
+        #self.testSet.input = np.insert(self.testSet.input, 0, 1, axis=1)
 
 
     def _get_layer(self, layer_index):
@@ -99,20 +99,9 @@ class MultilayerPerceptron(Classifier):
         return self._get_layer(-1)
 
     def _feed_forward(self, inp):
-        """
-        Do feed forward through the layers of the network
-
-        Parameters
-        ----------
-        inp : ndarray
-            a numpy array containing the input of the layer
-
-        # Here you have to propagate forward through the layers
-        # And remember the activation values of each layer
-        """
-        activationValues = inp
+        activationValues = (inp-min(inp))/(max(inp)-min(inp))
         for layer in self.layers:
-            activationValues = np.insert(layer.forward(activationValues),0,1)
+            activationValues = layer.forward(activationValues)
         
     def _compute_error(self, target):
         return  self.loss.calculateError(target,  self._get_output_layer().outp)
@@ -125,12 +114,12 @@ class MultilayerPerceptron(Classifier):
             layer.updateWeights(learningRate)
 
     def _backpropagate(self, target):
-        next_delta = target - self._get_output_layer().outp
+        next_delta = self.loss.calculateDerivative(target, self._get_output_layer().outp)
         next_weights = np.ones(self._get_output_layer().nOut)
 
         for layer in reversed(self.layers):
             next_delta = layer.computeDerivative(next_delta, np.transpose(next_weights))
-            next_weights = np.delete(layer.weights,0,0)
+            next_weights = layer.weights
 
     def train(self, verbose=True):
         for epoch in range(self.epochs):
@@ -152,10 +141,12 @@ class MultilayerPerceptron(Classifier):
         for inp, target in zip(self.trainingSet.input,
                               self.trainingSet.label):
             targetVector = np.zeros(10)
-            targetVector[target] = 1
+            targetVector[target] = 1.0
             self._feed_forward(inp)
             self._backpropagate(targetVector)
             self._update_weights(self.learningRate)
+
+
 
 
 
@@ -167,18 +158,6 @@ class MultilayerPerceptron(Classifier):
         
 
     def evaluate(self, test=None):
-        """Evaluate a whole dataset.
-
-        Parameters
-        ----------
-        test : the dataset to be classified
-        if no test data, the test set associated to the classifier will be used
-
-        Returns
-        -------
-        List:
-            List of classified decisions for the dataset's entries.
-        """
         if test is None:
             test = self.testSet.input
         # Once you can classify an instance, just use map for all of the test
